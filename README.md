@@ -2,6 +2,14 @@
 
 Training School CRM System backend built with .NET 9, following Onion Architecture principles.
 
+## 📚 Documentation
+
+- **[Architecture Gaps Analysis](ARCHITECTURE_GAPS_ANALYSIS.md)** - Comprehensive analysis of what's missing and what to implement
+- **[Implementation Roadmap](IMPLEMENTATION_ROADMAP.md)** - Step-by-step guide for implementing missing components
+- **[Database Setup](DATABASE_SETUP.md)** - PostgreSQL installation and configuration
+- **[Logging Guide](LOGGING_GUIDE.md)** - Serilog configuration and best practices
+- **[.NET Aspire Evaluation](DOTNET_ASPIRE_EVALUATION.md)** - Should you use .NET Aspire? (Answer: Not yet)
+
 ## Architecture
 
 This project follows **Onion Architecture** with the following layers:

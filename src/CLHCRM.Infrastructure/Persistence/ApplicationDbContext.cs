@@ -1,3 +1,4 @@
+using CLHCRM.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CLHCRM.Infrastructure.Persistence;
@@ -18,5 +19,20 @@ public class ApplicationDbContext : DbContext
 
         // Apply all entity configurations from the current assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        // Apply global query filter for soft delete
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(BaseAuditableEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                var parameter = System.Linq.Expressions.Expression.Parameter(entityType.ClrType, "e");
+                var property = System.Linq.Expressions.Expression.Property(parameter, nameof(BaseAuditableEntity.IsDeleted));
+                var falseConstant = System.Linq.Expressions.Expression.Constant(false);
+                var filter = System.Linq.Expressions.Expression.Equal(property, falseConstant);
+                var lambda = System.Linq.Expressions.Expression.Lambda(filter, parameter);
+
+                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+            }
+        }
     }
 }

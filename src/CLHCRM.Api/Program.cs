@@ -25,6 +25,7 @@ try
 
     // Add services to the container
     builder.Services.AddControllers();
+    builder.Services.AddHttpContextAccessor();
 
     // Add Application Layer
     builder.Services.AddApplication();
