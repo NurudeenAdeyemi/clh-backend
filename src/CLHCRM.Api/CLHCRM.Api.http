@@ -1,0 +1,6 @@
+@CLHCRM.Api_HostAddress = http://localhost:5108
+
+GET {{CLHCRM.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

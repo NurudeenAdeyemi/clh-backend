@@ -1,0 +1,19 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=clhcrm_dev;Username=your_username;Password=your_password;Include Error Detail=true"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "Microsoft.AspNetCore": "Information",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Information",
+      "Microsoft.EntityFrameworkCore": "Information"
+    }
+  },
+  "Jwt": {
+    "Secret": "your-local-secret-key-minimum-32-characters-long",
+    "Issuer": "CLHCRM.Api",
+    "Audience": "CLHCRM.Client",
+    "ExpiryMinutes": 1440
+  }
+}
