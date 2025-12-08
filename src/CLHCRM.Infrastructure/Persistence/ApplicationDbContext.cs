@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using CLHCRM.Domain.Entities;
+using CLHCRM.Domain.Common;
 
 namespace CLHCRM.Infrastructure.Persistence;
 

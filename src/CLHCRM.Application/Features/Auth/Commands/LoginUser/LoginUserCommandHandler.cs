@@ -43,7 +43,8 @@ namespace CLHCRM.Application.Features.Auth.Commands.LoginUser
             }
 
             // Generate JWT token
-            var token = _tokenService.GenerateToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var token = _tokenService.GenerateAccessToken(user, roles);
 
             return new AuthResult
             {

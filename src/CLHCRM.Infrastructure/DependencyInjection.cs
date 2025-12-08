@@ -16,9 +16,10 @@ public static class DependencyInjection
     {
         // Services
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<ITokenService, JwtTokenService>();
 
         // Interceptors
-        services.AddSingleton<AuditableEntityInterceptor>();
+        services.AddScoped<AuditableEntityInterceptor>();
 
         // Database
         services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>

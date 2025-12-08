@@ -1,7 +1,8 @@
-using CLHCRM.Application.Interfaces;
 using CLHCRM.Domain.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Security.Claims;
 
 namespace CLHCRM.Infrastructure.Persistence.Interceptors;
 
@@ -10,11 +11,11 @@ namespace CLHCRM.Infrastructure.Persistence.Interceptors;
 /// </summary>
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
-    private readonly ICurrentUserService _currentUserService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuditableEntityInterceptor(ICurrentUserService currentUserService)
+    public AuditableEntityInterceptor(IHttpContextAccessor httpContextAccessor)
     {
-        _currentUserService = currentUserService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public override InterceptionResult<int> SavingChanges(
@@ -38,7 +39,14 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
     {
         if (context == null) return;
 
-        var userId = _currentUserService.UserId ?? "System";
+        // Get user ID from HTTP context
+        string userId = "System"; // Default to System if not authenticated
+
+        var httpContext = _httpContextAccessor?.HttpContext;
+        if (httpContext?.User?.Identity?.IsAuthenticated == true)
+        {
+            userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
+        }
 
         foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
         {

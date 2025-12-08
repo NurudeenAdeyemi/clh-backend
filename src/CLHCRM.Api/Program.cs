@@ -1,6 +1,8 @@
-using CLHCRM.Api.Middleware;
+﻿using CLHCRM.Api.Middleware;
 using CLHCRM.Application;
+using CLHCRM.Application.Common.Configurations;
 using CLHCRM.Infrastructure;
+using CLHCRM.Infrastructure.Persistence;
 using Serilog;
 using Microsoft.AspNetCore.Identity;
 using CLHCRM.Domain.Entities;
@@ -32,11 +34,11 @@ try
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
 
-    // Add Application Layer
-    builder.Services.AddApplication();
-
-    // Add Infrastructure Layer (Database, Repositories, etc.)
+    // Add Infrastructure Layer (Database, Repositories, etc.) - needs to be before Application
     builder.Services.AddInfrastructure(builder.Configuration);
+
+    // Add Application Layer (depends on Infrastructure services)
+    builder.Services.AddApplication();
 
     // Add Identity
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -51,7 +53,8 @@ try
     .AddDefaultTokenProviders();
 
     // Configure JWT Authentication
-    var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
+        ?? throw new InvalidOperationException("JwtSettings configuration is missing");
     builder.Services.AddSingleton(jwtSettings); // Make JwtSettings available via DI
 
     builder.Services.AddAuthentication(options =>
@@ -69,7 +72,7 @@ try
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings.Issuer,
             ValidAudience = jwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
         };
     });
 
@@ -118,16 +121,12 @@ try
         };
     });
 
-    // Configure the HTTP request pipeline
-    if (app.Environment.IsDevelopment())
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "CLHCRM API v1");
-            c.RoutePrefix = "swagger";
-        });
-    }
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "CLHCRM API v1");
+        c.RoutePrefix = "swagger";
+    });
 
     app.UseHttpsRedirection();
 
