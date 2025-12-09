@@ -65,9 +65,7 @@ _ReSharper*/
 *.ldf
 
 # User-specific files
-appsettings.Development.json
 appsettings.Local.json
-*.Development.json
 *.Local.json
 
 # Logs
