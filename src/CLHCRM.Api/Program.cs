@@ -38,7 +38,7 @@ try
     builder.Services.AddInfrastructure(builder.Configuration);
 
     // Add Application Layer (depends on Infrastructure services)
-    builder.Services.AddApplication();
+    builder.Services.AddApplication(builder.Configuration);
 
     // Add Identity
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -55,7 +55,6 @@ try
     // Configure JWT Authentication
     var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
         ?? throw new InvalidOperationException("JwtSettings configuration is missing");
-    builder.Services.AddSingleton(jwtSettings); // Make JwtSettings available via DI
 
     builder.Services.AddAuthentication(options =>
     {
